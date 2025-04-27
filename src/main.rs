@@ -1,6 +1,5 @@
-use std::default;
-
 use iced::Length::Fill;
+use iced::widget::shader::wgpu::naga::Bytes;
 use iced::widget::text::Style;
 use iced::widget::{button, column, container, row, text};
 use iced::{Color, Element, Font, Task};
@@ -11,6 +10,7 @@ struct Flashcard {
     question: String,
     answers: Vec<String>,
     correct_question: usize, // could be i32 but usize is not negative
+    image: Option<String>,   // path
 }
 
 #[derive(Clone, Debug, Default)]
@@ -55,20 +55,24 @@ impl App {
                             a: 1.0
                         })
                     }),
-                row![button(text("cycle")).on_press(Message::Cycle)]
+                row![button(text("create")).on_press(Message::ChangeMenu(Menu::CreateFlashcard))]
             ]),
-            Menu::CreateFlashcard => container(text("a")),
+            Menu::CreateFlashcard => container(button(text("Back")).on_press(Message::Back)),
         };
         container(c).width(Fill).into()
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
-            Message::Cycle => {}
+            Message::ChangeMenu(menu) => {
+                self.menu_state = menu;
+            }
+            Message::Back => {
+                self.menu_state = Menu::Main;
+            }
             Message::Add => {}
             Message::Remove => {}
-            Message::Back => {}
-            Message::ChangeMenu(menu) => {}
+            Message::Cycle => {}
         }
 
         Task::none()
